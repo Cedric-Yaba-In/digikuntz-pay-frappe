@@ -4,6 +4,12 @@ app_publisher = "GIC Promote Ltd"
 app_description = "Library de paiement mobile"
 app_email = "choudja@gic.cm"
 app_license = "mit"
+app_version = "1.0.0"
+
+# Inclure dans les sites
+include_app_in_doctype = {
+    "Payment Request": "payments.overrides.payment_request"
+}
 
 # Apps
 # ------------------
