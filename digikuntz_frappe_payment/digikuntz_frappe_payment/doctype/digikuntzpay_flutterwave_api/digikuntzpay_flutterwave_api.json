@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-29 09:27:28.161712",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "public_key",
+  "column_break_oekd",
+  "secret_key"
+ ],
+ "fields": [
+  {
+   "fieldname": "public_key",
+   "fieldtype": "Small Text",
+   "label": "Public Key"
+  },
+  {
+   "fieldname": "column_break_oekd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "secret_key",
+   "fieldtype": "Small Text",
+   "label": "Secret Key"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-12-29 09:28:26.173038",
+ "modified_by": "Administrator",
+ "module": "Digikuntz Frappe Payment",
+ "name": "DigikuntzPay FlutterWave API",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

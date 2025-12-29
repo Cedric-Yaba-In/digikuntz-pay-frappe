@@ -13,9 +13,9 @@ IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
 
-class IntegrationTestApiKey(IntegrationTestCase):
+class IntegrationTestDigikuntzPayLink(IntegrationTestCase):
 	"""
-	Integration tests for ApiKey.
+	Integration tests for DigikuntzPayLink.
 	Use this class for testing interactions between multiple components.
 	"""
 

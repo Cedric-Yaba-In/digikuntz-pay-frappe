@@ -5,11 +5,15 @@ app_description = "Library de paiement mobile"
 app_email = "choudja@gic.cm"
 app_license = "mit"
 app_version = "1.0.0"
+# app_logo_url = "/assets/digikuntz_frappe_payment/images/logo.png"
+app_icon = "fa fa-key"
+app_color = "#e74c3c"
+has_desktop = True
 
 # Inclure dans les sites
-include_app_in_doctype = {
-    "Payment Request": "payments.overrides.payment_request"
-}
+# include_app_in_doctype = {
+#     "Payment Request": "payments.overrides.payment_request"
+# }
 
 # Apps
 # ------------------
@@ -19,11 +23,11 @@ include_app_in_doctype = {
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
-# 		"name": "digikuntz_frappe_payment",
-# 		"logo": "/assets/digikuntz_frappe_payment/logo.png",
-# 		"title": "Digikuntz Frappe Payment",
+# 		"name": app_name,
+# 		"logo": app_logo_url,
+# 		"title": app_title,
 # 		"route": "/digikuntz_frappe_payment",
-# 		"has_permission": "digikuntz_frappe_payment.api.permission.has_app_permission"
+# 		# "has_permission": "digikuntz_frappe_payment.api.permission.has_app_permission"
 # 	}
 # ]
 
@@ -49,7 +53,9 @@ include_app_in_doctype = {
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Sales Invoice": "public/js/global_payment_button.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
