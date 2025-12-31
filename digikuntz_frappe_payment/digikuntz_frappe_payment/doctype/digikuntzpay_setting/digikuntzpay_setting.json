@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-30 14:01:14.915430",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "general",
+  "behavior_mode",
+  "column_break_biur",
+  "mode_de_paiement_par_d\u00e9faut",
+  "e_nkap_key",
+  "enkap_key",
+  "enkap_public_key",
+  "column_break_pkpt",
+  "enkap_private_key"
+ ],
+ "fields": [
+  {
+   "fieldname": "general",
+   "fieldtype": "Tab Break",
+   "label": "G\u00e9n\u00e9ral"
+  },
+  {
+   "default": "R\u00e9direction URL",
+   "fieldname": "behavior_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mode de fonctionement",
+   "options": "R\u00e9direction URL\nRequ\u00eate de payment\nQR Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_biur",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "E-Nkap",
+   "fieldname": "mode_de_paiement_par_d\u00e9faut",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mode de paiement par d\u00e9faut",
+   "options": "E-Nkap\nFlutterWave",
+   "reqd": 1
+  },
+  {
+   "fieldname": "e_nkap_key",
+   "fieldtype": "Tab Break",
+   "label": "E-Nkap Key"
+  },
+  {
+   "fieldname": "enkap_key",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_pkpt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enkap_public_key",
+   "fieldtype": "Small Text",
+   "label": "Clef Publque"
+  },
+  {
+   "fieldname": "enkap_private_key",
+   "fieldtype": "Small Text",
+   "label": "Clefs Priv\u00e9e"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-12-31 16:39:56.236243",
+ "modified_by": "Administrator",
+ "module": "Digikuntz Frappe Payment",
+ "name": "DigikuntzPay Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "DigikuntzPay Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

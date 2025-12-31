@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class DigiKuntzPayGeneralSettings(Document):
+class DigikuntzPaySetting(Document):
 	pass

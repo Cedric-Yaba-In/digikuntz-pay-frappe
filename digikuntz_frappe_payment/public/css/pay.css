@@ -523,8 +523,8 @@ input:focus, select:focus {
     display: none;
 }
 
-/* PayPal Button */
-.paypal-button {
+/* pay Button */
+.pay-button {
     width: 100%;
     padding: 20px;
     background: #003087;
@@ -541,7 +541,7 @@ input:focus, select:focus {
     transition: all 0.3s ease;
 }
 
-.paypal-button:hover {
+.pay-button:hover {
     background: #002366;
 }
 

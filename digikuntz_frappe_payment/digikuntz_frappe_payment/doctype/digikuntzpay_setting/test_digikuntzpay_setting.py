@@ -13,9 +13,9 @@ IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
 
-class IntegrationTestDigiKuntzPayGeneralSettings(IntegrationTestCase):
+class IntegrationTestDigikuntzPaySetting(IntegrationTestCase):
 	"""
-	Integration tests for DigiKuntzPayGeneralSettings.
+	Integration tests for DigikuntzPaySetting.
 	Use this class for testing interactions between multiple components.
 	"""
 

@@ -8,56 +8,16 @@ class PaymentGateway {
     }
 
     init() {
-        this.setupEventListeners();
         this.loadInvoiceData();
-        this.setupStripe();
         this.updatePaymentSteps();
+        this.setupEventListeners();
     }
 
     setupEventListeners() {
-        // Method tabs
-        document.querySelectorAll('.method-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                this.switchPaymentMethod(e.target.dataset.method);
-            });
-        });
-
-        // Method icons
-        document.querySelectorAll('.method-icon').forEach(icon => {
-            icon.addEventListener('click', (e) => {
-                this.switchPaymentMethod(e.currentTarget.dataset.method);
-            });
-        });
-
-        // Form submission
-        document.getElementById('payment-form').addEventListener('submit', (e) => {
+        console.log("PAy button ",document.getElementById('pay-button'))
+        document.getElementById('pay-button').addEventListener('click', (e) => {
             e.preventDefault();
-            this.processCardPayment();
-        });
-
-        document.getElementById('paypal-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.processPayPalPayment();
-        });
-
-        document.getElementById('mobile-money-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.processMobilePayment();
-        });
-
-        // Card number formatting
-        document.getElementById('card-number').addEventListener('input', (e) => {
-            this.formatCardNumber(e.target);
-        });
-
-        // Expiry date formatting
-        document.getElementById('card-expiry').addEventListener('input', (e) => {
-            this.formatExpiryDate(e.target);
-        });
-
-        // CVC formatting
-        document.getElementById('card-cvc').addEventListener('input', (e) => {
-            this.formatCVC(e.target);
+            this.processRedirectUrlPayment();
         });
     }
 
@@ -83,25 +43,7 @@ class PaymentGateway {
         document.getElementById('grand-total').textContent = this.formatCurrency(this.invoice.grand_total);
     }
 
-    setupStripe() {
-        // Initialize Stripe
-        this.stripe = Stripe(this.invoice.stripe_public_key);
-        
-        // Create card element
-        const elements = this.stripe.elements();
-        this.cardElement = elements.create('card', {
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#32325d',
-                    fontFamily: 'Poppins, sans-serif',
-                }
-            }
-        });
-        
-        // Mount card element
-        this.cardElement.mount('#card-element');
-    }
+
 
     switchPaymentMethod(method) {
         this.currentMethod = method;
@@ -141,24 +83,6 @@ class PaymentGateway {
         });
     }
 
-    formatCardNumber(input) {
-        let value = input.value.replace(/\D/g, '');
-        value = value.replace(/(\d{4})/g, '$1 ').trim();
-        input.value = value.substring(0, 19);
-    }
-
-    formatExpiryDate(input) {
-        let value = input.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = value.substring(0, 2) + '/' + value.substring(2, 4);
-        }
-        input.value = value.substring(0, 5);
-    }
-
-    formatCVC(input) {
-        input.value = input.value.replace(/\D/g, '').substring(0, 4);
-    }
-
     formatCurrency(amount) {
         return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
@@ -166,73 +90,20 @@ class PaymentGateway {
         }).format(amount);
     }
 
-    async processCardPayment() {
-        this.showLoading();
-        
-        try {
-            // Validate form
-            if (!this.validateCardForm()) {
-                this.hideLoading();
-                return;
-            }
-
-            // Create payment method
-            const { paymentMethod, error } = await this.stripe.createPaymentMethod({
-                type: 'card',
-                card: this.cardElement,
-                billing_details: {
-                    name: document.getElementById('card-name').value,
-                    email: document.getElementById('email').value
-                }
-            });
-
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            // Process payment with backend
-            const response = await this.sendPaymentToBackend({
-                method: 'card',
-                payment_method_id: paymentMethod.id,
-                amount: this.invoice.grand_total,
-                currency: this.invoice.currency,
-                invoice: this.invoice.name
-            });
-
-            // Confirm payment
-            const { error: confirmError } = await this.stripe.confirmCardPayment(
-                response.client_secret
-            );
-
-            if (confirmError) {
-                throw new Error(confirmError.message);
-            }
-
-            // Success
-            this.showSuccess(response);
-            
-        } catch (error) {
-            this.showError(error.message);
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    async processPayPalPayment() {
+    async processRedirectUrlPayment() {
         this.showLoading();
         
         try {
             const response = await this.sendPaymentToBackend({
-                method: 'paypal',
+                method: 'pay',
                 amount: this.invoice.grand_total,
-                currency: this.invoice.currency,
                 invoice: this.invoice.name,
                 return_url: window.location.origin + '/payment/success',
                 cancel_url: window.location.origin + '/payment/cancel'
             });
 
-            // Redirect to PayPal
-            window.location.href = response.approval_url;
+            // Redirect to pay
+            // window.location.href = response.approval_url;
             
         } catch (error) {
             this.showError(error.message);
@@ -240,76 +111,6 @@ class PaymentGateway {
         }
     }
 
-    async processMobilePayment() {
-        this.showLoading();
-        
-        try {
-            const provider = document.getElementById('mobile-provider').value;
-            const phone = document.getElementById('mobile-number').value;
-
-            if (!phone) {
-                throw new Error('Veuillez entrer un numéro de téléphone');
-            }
-
-            const response = await this.sendPaymentToBackend({
-                method: 'mobile',
-                provider: provider,
-                phone: phone,
-                amount: this.invoice.grand_total,
-                currency: this.invoice.currency,
-                invoice: this.invoice.name
-            });
-
-            this.showNotification('Demande de paiement envoyée ! Vérifiez votre téléphone.', 'success');
-            
-        } catch (error) {
-            this.showError(error.message);
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    validateCardForm() {
-        const cardNumber = document.getElementById('card-number').value;
-        const expiry = document.getElementById('card-expiry').value;
-        const cvc = document.getElementById('card-cvc').value;
-        const name = document.getElementById('card-name').value;
-        const email = document.getElementById('email').value;
-        const terms = document.getElementById('terms').checked;
-
-        // Basic validation
-        if (!cardNumber || cardNumber.replace(/\s/g, '').length < 16) {
-            this.showError('Numéro de carte invalide');
-            return false;
-        }
-
-        if (!expiry || !/^\d{2}\/\d{2}$/.test(expiry)) {
-            this.showError('Date d\'expiration invalide (format MM/AA)');
-            return false;
-        }
-
-        if (!cvc || cvc.length < 3) {
-            this.showError('Code CVC invalide');
-            return false;
-        }
-
-        if (!name) {
-            this.showError('Nom sur la carte requis');
-            return false;
-        }
-
-        if (!email || !this.validateEmail(email)) {
-            this.showError('Email invalide');
-            return false;
-        }
-
-        if (!terms) {
-            this.showError('Vous devez accepter les conditions générales');
-            return false;
-        }
-
-        return true;
-    }
 
     validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -317,11 +118,12 @@ class PaymentGateway {
     }
 
     async sendPaymentToBackend(paymentData) {
-        const response = await fetch('/api/method/votre_app.payments.api.process_payment', {
+        console.log("paymentData 2", paymentData);
+        const response = await fetch('/api/method/digikuntz_frappe_payment.api.generate_payment_link_to_api_gateway', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Frappe-CSRF-Token': frappe.csrf_token
+                'X-Frappe-CSRF-Token': csrf_token
             },
             body: JSON.stringify(paymentData)
         });
@@ -331,19 +133,21 @@ class PaymentGateway {
             throw new Error(error.message || 'Erreur lors du traitement du paiement');
         }
 
+        console.log("response", response);
+
         return await response.json();
     }
 
     showLoading() {
         document.getElementById('loading-overlay').style.display = 'flex';
         document.getElementById('pay-button').disabled = true;
-        document.getElementById('button-loading').style.display = 'inline-block';
+        // document.getElementById('button-loading').style.display = 'inline-block';
     }
 
     hideLoading() {
         document.getElementById('loading-overlay').style.display = 'none';
         document.getElementById('pay-button').disabled = false;
-        document.getElementById('button-loading').style.display = 'none';
+        // document.getElementById('button-loading').style.display = 'none';
     }
 
     showNotification(message, type = 'info') {
@@ -405,14 +209,7 @@ class PaymentGateway {
 document.addEventListener('DOMContentLoaded', function() {
     // Get invoice data from template or API
     const invoiceData = window.invoiceData || {};
-    
-    console.log("Invoice Data:", invoiceData);
-    // If no data in template, fetch from API
-    if (!invoiceData.name && window.invoiceName) {
-        fetchInvoiceData(window.invoiceName);
-    } else {
-        window.paymentGateway = new PaymentGateway(invoiceData);
-    }
+    window.paymentGateway = new PaymentGateway(invoiceData);
 
     // Copy to clipboard functionality
     document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -430,17 +227,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-async function fetchInvoiceData(invoiceName) {
-    try {
-        const response = await fetch(`/api/method/votre_app.payments.api.get_invoice?invoice=${invoiceName}`);
-        const data = await response.json();
-        
-        if (data.message) {
-            window.paymentGateway = new PaymentGateway(data.message);
-        }
-    } catch (error) {
-        console.error('Error fetching invoice:', error);
-        document.getElementById('error-message').textContent = 'Impossible de charger les données de la facture.';
-        document.getElementById('error-message').style.display = 'block';
-    }
-}

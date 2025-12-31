@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/assets/digikuntz_frappe_payment/css/pay.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <div class="payment-container">
@@ -115,29 +114,6 @@
                                 <span class="total-amount" id="grand-total">{{ invoice.grand_total }}</span>
                             </div>
                         </div>
-
-                        <!-- Payment Methods -->
-                        <div class="payment-methods">
-                            <h3><i class="fas fa-credit-card"></i> Méthodes de paiement acceptées</h3>
-                            <div class="method-icons">
-                                <div class="method-icon" data-method="card">
-                                    <i class="fab fa-cc-visa"></i>
-                                    <span>Carte bancaire</span>
-                                </div>
-                                <div class="method-icon" data-method="paypal">
-                                    <i class="fab fa-cc-paypal"></i>
-                                    <span>PayPal</span>
-                                </div>
-                                <div class="method-icon" data-method="mobile">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    <span>Mobile Money</span>
-                                </div>
-                                <div class="method-icon" data-method="transfer">
-                                    <i class="fas fa-university"></i>
-                                    <span>Virement</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Security Assurance -->
@@ -173,126 +149,18 @@
 
                         <!-- Payment Method Selector -->
                         <div class="method-selector">
-                            <div class="method-tabs">
-                                <button class="method-tab active" data-method="card">
-                                    <i class="fas fa-credit-card"></i>
-                                    Carte bancaire
-                                </button>
-                                <button class="method-tab" data-method="paypal">
-                                    <i class="fab fa-paypal"></i>
-                                    PayPal
-                                </button>
-                                <button class="method-tab" data-method="mobile">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    Mobile Money
-                                </button>
-                            </div>
-
-                            <!-- Card Payment Form -->
-                            <div id="card-form" class="payment-method-form active">
-                                <form id="payment-form">
-                                    <div class="form-group">
-                                        <label for="card-number">
-                                            <i class="fas fa-credit-card"></i>
-                                            Numéro de carte
-                                        </label>
-                                        <div class="input-with-icon">
-                                            <input type="text" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19">
-                                            <div class="card-icons">
-                                                <i class="fab fa-cc-visa"></i>
-                                                <i class="fab fa-cc-mastercard"></i>
-                                                <i class="fab fa-cc-amex"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="card-expiry">
-                                                <i class="fas fa-calendar-alt"></i>
-                                                Date d'expiration
-                                            </label>
-                                            <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="card-cvc">
-                                                <i class="fas fa-lock"></i>
-                                                Code CVC
-                                            </label>
-                                            <input type="text" id="card-cvc" placeholder="123" maxlength="4">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="card-name">
-                                            <i class="fas fa-user"></i>
-                                            Nom sur la carte
-                                        </label>
-                                        <input type="text" id="card-name" placeholder="JEAN DUPONT">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="email">
-                                            <i class="fas fa-envelope"></i>
-                                            Email pour reçu
-                                        </label>
-                                        <input type="email" id="email" value="{{ invoice.contact_email }}">
-                                    </div>
-
-                                    <div class="terms-checkbox">
-                                        <input type="checkbox" id="terms" required>
-                                        <label for="terms">
-                                            J'accepte les <a href="/terms" target="_blank">conditions générales</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a>
-                                        </label>
-                                    </div>
-
-                                    <button type="submit" class="pay-button" id="pay-button">
-                                        <i class="fas fa-lock"></i>
-                                        Payer {{ invoice.grand_total }}
-                                        <span class="button-loading" id="button-loading">
-                                            <i class="fas fa-spinner fa-spin"></i>
-                                        </span>
-                                    </button>
-
-                                    <div class="secure-notice">
-                                        <i class="fas fa-lock"></i>
-                                        Vos données sont sécurisées et cryptées
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- PayPal Form -->
-                            <div id="paypal-form" class="payment-method-form">
+                    
+                            <div id="paypal-form" class="payment-method-form active">
                                 <div class="paypal-container">
-                                    <p>Vous serez redirigé vers PayPal pour finaliser le paiement.</p>
-                                    <button class="paypal-button" id="paypal-button">
+                                    <p style="margin-bottom: 10px;">Vous serez redirigé vers une page pour finaliser le paiement.</p>
+                                    <button class="pay-button" id="pay-button">
                                         <i class="fab fa-paypal"></i>
-                                        Payer avec PayPal
+                                        Proceder au paiement
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Mobile Money Form -->
-                            <div id="mobile-form" class="payment-method-form">
-                                <form id="mobile-money-form">
-                                    <div class="form-group">
-                                        <label for="mobile-provider">Opérateur</label>
-                                        <select id="mobile-provider">
-                                            <option value="orange">Orange Money</option>
-                                            <option value="mtn">MTN Mobile Money</option>
-                                            <option value="moov">Moov Money</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="mobile-number">Numéro de téléphone</label>
-                                        <input type="tel" id="mobile-number" placeholder="+225 07 00 00 00 00">
-                                    </div>
-                                    <button type="submit" class="mobile-money-button">
-                                        <i class="fas fa-mobile-alt"></i>
-                                        Envoyer la demande de paiement
-                                    </button>
-                                </form>
-                            </div>
+               
                         </div>
 
                         <!-- Support Info -->
@@ -320,13 +188,13 @@
             <div class="footer-content">
                 <div class="company-info">
                     <span>{{ company }}</span>
-                    <span>{{ company_address }}</span>
+                    <!-- <span>{{ company_address }}</span> -->
                 </div>
-                <div class="footer-links">
+                <!-- <div class="footer-links">
                     <a href="/terms">Conditions d'utilisation</a>
                     <a href="/privacy">Politique de confidentialité</a>
                     <a href="/refund">Politique de remboursement</a>
-                </div>
+                </div> -->
                 <div class="copyright">
                     © {{ year }} {{ company }}. Tous droits réservés.
                 </div>
@@ -369,7 +237,9 @@
                 {% endfor %}
             ]
         };
+        var csrf_token= "{{ csrf_token }}";
+        console.log("csrf_token", csrf_token);
     </script>
-    <script src="/assets/digikuntz_frappe_payment/js/pay.js"></script>
+    <script src="/assets/digikuntz_frappe_payment/js/pay.js?v={{ version }}"></script>
 </body>
 </html>
