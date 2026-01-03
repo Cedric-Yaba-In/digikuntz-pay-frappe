@@ -11,3 +11,5 @@ class GatyewayPaymentBehavior(Enum):
 class GatyewayPaymentType(Enum):
     E_NKAP = "E-Nkap"
     FLUTTERWAVE = "Flutterwave"
+    CINET_PAY = "Cinet Pay"
+    MTN_MOMO = "MTN MoMo"

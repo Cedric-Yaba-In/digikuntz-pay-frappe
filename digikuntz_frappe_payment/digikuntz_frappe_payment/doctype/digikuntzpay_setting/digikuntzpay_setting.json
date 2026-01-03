@@ -13,7 +13,17 @@
   "enkap_key",
   "enkap_public_key",
   "column_break_pkpt",
-  "enkap_private_key"
+  "enkap_private_key",
+  "cintet_pay_tab",
+  "cinetpay_api_key",
+  "column_break_fsei",
+  "cinetpay_private_key",
+  "section_break_fhhf",
+  "cinetpay_site_id",
+  "mtn_momo_tab",
+  "mtnmomo_subscription_id",
+  "column_break_eesk",
+  "mtnmomo_secondary_key"
  ],
  "fields": [
   {
@@ -40,7 +50,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Mode de paiement par d\u00e9faut",
-   "options": "E-Nkap\nFlutterWave",
+   "options": "E-Nkap\nFlutterWave\nCinet Pay\nMTN MoMo",
    "reqd": 1
   },
   {
@@ -65,13 +75,60 @@
    "fieldname": "enkap_private_key",
    "fieldtype": "Small Text",
    "label": "Clefs Priv\u00e9e"
+  },
+  {
+   "fieldname": "cintet_pay_tab",
+   "fieldtype": "Tab Break",
+   "label": "Cintet Pay"
+  },
+  {
+   "fieldname": "column_break_fsei",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_fhhf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cinetpay_private_key",
+   "fieldtype": "Small Text",
+   "label": "Clef priv\u00e9"
+  },
+  {
+   "fieldname": "cinetpay_site_id",
+   "fieldtype": "Small Text",
+   "label": "Site ID"
+  },
+  {
+   "fieldname": "mtn_momo_tab",
+   "fieldtype": "Tab Break",
+   "label": "MTN MoMo"
+  },
+  {
+   "fieldname": "column_break_eesk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mtnmomo_subscription_id",
+   "fieldtype": "Small Text",
+   "label": "Subscription ID"
+  },
+  {
+   "fieldname": "mtnmomo_secondary_key",
+   "fieldtype": "Small Text",
+   "label": "Secondary Key"
+  },
+  {
+   "fieldname": "cinetpay_api_key",
+   "fieldtype": "Small Text",
+   "label": "Clef API"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-12-31 16:39:56.236243",
+ "modified": "2026-01-03 21:06:14.954025",
  "modified_by": "Administrator",
  "module": "Digikuntz Frappe Payment",
  "name": "DigikuntzPay Setting",

@@ -3,8 +3,9 @@
 
 import frappe
 import json
-import digikuntz_frappe_payment.gateways.utils as gateway_utils
-import digikuntz_frappe_payment.gateways.enum as enum_utils
+import digikuntz_frappe_payment.utils.gateway_factory as gateway_factory
+import digikuntz_frappe_payment.utils.payment_handler as payment_handler
+import digikuntz_frappe_payment.utils.enum as enum_utils
 
 
 def get_payment_link(doc):
@@ -45,19 +46,31 @@ def generate_payment_link_to_api_gateway():
 
     if ressource_to_pay.outstanding_amount <= 0:
         frappe.throw(_("Invoice is already paid"))
+    
+    if not frappe.db.exists("Customer", ressource_to_pay.customer):
+        frappe.throw(_("Customer information is missing in the resource to pay."))
 
-    gateway_payment = gateway_utils.load_default_gateway()
+    customer_data =frappe.get_doc("Customer", ressource_to_pay.customer)
+
+    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data)
 
     behavior_for_payment = frappe.db.get_single_value('DigikuntzPay Setting', 'behavior_mode')
 
-    if behavior_for_payment == enum_utils.GatyewayPaymentBehavior.REDIRECTION_URL.value: #Comportement lors de la rédirection vers l'urm
-        return gateway_payment.get_url_to_redirect()
+    if behavior_for_payment == enum_utils.GatyewayPaymentBehavior.PAYMENT_BY_QRCODE.value: #Comportement lors du paiement par QrCode
+        return gateway_payment.make_payment_by_qrcode()
     elif behavior_for_payment == enum_utils.GatyewayPaymentBehavior.DIRECT_PAYMENT_REQUEST.value: #Pour le paiement request
         return gateway_payment.make_direct_payment()
-    else: #Dans le cas contraire QRCode
-        return gateway_payment.make_payment_by_qrcode()
- 
+    else: #Dans le cas contraire Redirection URL
+        return gateway_payment.get_url_to_redirect()
     
     # your API logic here
    
+
+@frappe.whitelist(allow_guest=True)
+def payment_callback():
+    payment_status = None
+
+    if payment_status:
+        payment_handler.on_success_payment(None,None)
+    return None
 

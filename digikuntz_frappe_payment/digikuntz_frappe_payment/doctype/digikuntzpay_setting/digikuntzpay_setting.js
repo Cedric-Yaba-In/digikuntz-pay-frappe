@@ -8,6 +8,16 @@ frappe.ui.form.on("DigikuntzPay Setting", {
             frappe.show_alert({ message:__('Clefs d\'API de E-Nkap non définis.'), indicator:'red' });
             frappe.throw(null);
         }
+        if(frm.doc.mode_de_paiement_par_défaut =="Cinet Pay" && (!frm.doc.cinetpay_api_key || !frm.doc.cinetpay_private_key))
+        {
+            frappe.show_alert({ message:__('Clefs d\'API de Cinet Pay non définis.'), indicator:'red' });
+            frappe.throw(null);
+        }
+        if(frm.doc.mode_de_paiement_par_défaut =="MTN MoMo" && (!frm.doc.mtnmomo_secondary_key || !frm.doc.mtnmomo_subscription_id))
+        {
+            frappe.show_alert({ message:__('Clefs d\'API de MTN MoMo non définis.'), indicator:'red' });
+            frappe.throw(null);
+        }
         return true;
     }
 });
