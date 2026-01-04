@@ -1,0 +1,5 @@
+- Bien tester completement le paiement avec cinetpay et les retours depuis cinetpay
+- Mettre la page de settings sur un onglet faciliment accessible dans ERPNext
+- Ajouter des logs pour tracer les erreurs de paiement
+- Améliorer la structure des fichier html pour les mettres sous forme de structure avec un template par défaut et des blocks à remplir
+- Se rassurer que les Payment Entry sont bien sauvegarder et que les mails sont bien envoyé
