@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Paiement sécurisé | {{ company }}</title>
+            <link rel="stylesheet" href="/assets/digikuntz_frappe_payment/css/pay.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        </head>
+        <body>
+            <div class="payment-container">
+                <!-- Header -->
+                <header class="payment-header">
+                    <div class="header-content">
+                        <div class="logo-section">
+                            <div class="logo">
+                                <i class="fas fa-lock-shield"></i>
+                                <span>{{ company }} |  DigikuntzPay</span>
+                            </div>
+                            <div class="secure-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>100% Sécurisé</span>
+                            </div>
+                        </div>
+                        <div class="payment-status">
+                            <div class="step active">
+                                <span class="step-number">1</span>
+                                <span class="step-text">Récapitulatif</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">2</span>
+                                <span class="step-text">Paiement</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">3</span>
+                                <span class="step-text">Confirmation</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Main Content -->
+                <main class="payment-main">
+                    <div class="payment-grid">
+                        <!-- Left Column: Order Summary -->
+                        <div class="summary-column">
+                            <div class="summary-card">
+                                <h2 class="summary-title">
+                                    <i class="fas fa-receipt"></i>
+                                    Récapitulatif de la facture
+                                </h2>
+                                
+                                <div class="invoice-info">
+                                    <div class="info-row">
+                                        <span class="info-label">Facture N°</span>
+                                        <span class="info-value invoice-number">{{ invoice.name }}</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">Date d'émission</span>
+                                        <span class="info-value">{{ invoice.posting_date }}</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">Date d'échéance</span>
+                                        <span class="info-value">{{ invoice.due_date }}</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">Client</span>
+                                        <span class="info-value">{{ invoice.customer_name }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Items Table -->
+                                <div class="items-table">
+                                    <h3>Détails des articles</h3>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Quantité</th>
+                                                <th>Prix unitaire</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="items-list">
+                                            <!-- Items will be populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Amount Summary -->
+                                <div class="amount-summary">
+                                    <div class="summary-row">
+                                        <span>Sous-total</span>
+                                        <span id="subtotal">{{ invoice.net_total }}</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>
+                                            TVA 
+                                            {% if invoice.taxes|length > 0 %} 
+                                                ({{ invoice.taxes[0].rate }}%)
+                                            {% else %} 
+                                                (Inconnue)
+                                            {% endif %}
+                                        </span>
+                                        <span id="tax">{{ invoice.total_taxes_and_charges }}</span>
+                                    </div>
+                                    <div class="summary-row discount">
+                                        <span>Remise</span>
+                                        <span>-{{ invoice.discount_amount }}</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span><strong>Total à payer</strong></span>
+                                        <span class="total-amount" id="grand-total">{{ invoice.grand_total }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Assurance -->
+                            <div class="security-card">
+                                <h3><i class="fas fa-shield-alt"></i> Sécurité garantie</h3>
+                                <div class="security-features">
+                                    <div class="feature">
+                                        <i class="fas fa-lock"></i>
+                                        <span>Paiement crypté SSL 256-bit</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-user-shield"></i>
+                                        <span>Protection des données</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-credit-card"></i>
+                                        <span>Pas de données bancaires stockées</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Payment Form -->
+                        <div class="payment-column">
+                            <div class="payment-form-card">
+                                <div class="payment-header-card">
+                                    <h2><i class="fas fa-credit-card"></i> Détails de paiement</h2>
+                                    <div class="amount-display">
+                                        <span class="amount-label">Montant à régler</span>
+                                        <span class="amount-value">{{ invoice.grand_total }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method Selector -->
+                                <div class="method-selector">
+                            
+                                    <div id="paypal-form" class="payment-method-form active">
+                                        <div class="paypal-container">
+                                            <p style="margin-bottom: 10px;">Vous serez redirigé vers une page pour finaliser le paiement.</p>
+                                            <button class="pay-button" id="pay-button">
+                                                <i class="fab fa-paypal"></i>
+                                                Proceder au paiement
+                                            </button>
+                                        </div>
+                                    </div>
+
+                    
+                                </div>
+
+                                <!-- Support Info -->
+                                <div class="support-card">
+                                    <h4><i class="fas fa-headset"></i> Besoin d'aide ?</h4>
+                                    <p>Notre équipe est disponible pour vous aider.</p>
+                                    <div class="contact-info">
+                                        <div class="contact-item">
+                                            <i class="fas fa-phone"></i>
+                                            <span>{{ company_phone }}</span>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>{{ company_email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Footer -->
+                <footer class="payment-footer">
+                    <div class="footer-content">
+                        <div class="company-info">
+                            <span>{{ company }}</span>
+                            <!-- <span>{{ company_address }}</span> -->
+                        </div>
+                        <!-- <div class="footer-links">
+                            <a href="/terms">Conditions d'utilisation</a>
+                            <a href="/privacy">Politique de confidentialité</a>
+                            <a href="/refund">Politique de remboursement</a>
+                        </div> -->
+                        <div class="copyright">
+                            © {{ year }} {{ company }}. Tous droits réservés.
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            <!-- Notification Toast -->
+            <div id="notification-toast" class="toast">
+                <div class="toast-content">
+                    <i class="toast-icon"></i>
+                    <span class="toast-message"></span>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p>Traitement du paiement en cours...</p>
+                </div>
+            </div>
+
+            <script >
+                var invoiceData = {
+                    name: "{{ invoice.name }}",
+                    currency:"{{ currency }}",
+                    net_total: {{ invoice.net_total }},
+                    total_taxes_and_charges: {{ invoice.total_taxes_and_charges }},
+                    discount_amount: {{ invoice.discount_amount }},
+                    grand_total: {{ invoice.grand_total }},
+                    items: [
+                        {% for item in invoice.items %}
+                        {
+                            description: "{{ item.item_name }}",
+                            qty: parseInt({{ item.qty }}),
+                            rate: {{ item.rate }},
+                            amount: {{ item.amount }}
+                        }
+                        {% if not loop.last %} , {% endif %}
+                        {% endfor %}
+                    ]
+                };
+                var csrf_token= "{{ csrf_token }}";;
+            </script>
+            <script src="/assets/digikuntz_frappe_payment/js/pay.js?v={{ version }}"></script>
+        </body>
+        </html>

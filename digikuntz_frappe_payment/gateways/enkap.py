@@ -27,13 +27,13 @@ class HMACSignature:
         return f"{self.method.upper()}{glue}{parse.quote(self.url, safe='-')}{glue}{parse.quote(parameter_string, safe='-')}"
     
 class EnkapApiGateway(AbstractPaymentApiGateway):
-    def __init__(self,ressource_to_pay,customer_data,return_url=None, notify_url=None):
+    def __init__(self,ressource_to_pay,customer_data,success_url=None, cancel_url=None):
         self.load_credential_api_gateway()
         self.api_url="https://s3papidoc.smobilpay.maviance.info/v2"
         self.api_version="3.0.0"
         self.debug=True
-        self.return_url = return_url
-        self.notify_url = notify_url
+        self.success_url = success_url
+        self.cancel_url = cancel_url
         self.ressource_to_pay = ressource_to_pay
         self.customer_data = customer_data
 

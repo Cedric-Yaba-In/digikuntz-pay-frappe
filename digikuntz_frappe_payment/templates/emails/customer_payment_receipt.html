@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Paiement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #4CAF50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border: 1px solid #ddd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            font-size: 12px;
+        }
+        
+        .success-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .details {
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #eee;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Paiement Confirmé</h1>
+        <p>Votre transaction a été traitée avec succès</p>
+    </div>
+    
+    <div class="content">
+        <p>Bonjour <strong>{{ customer_name }}</strong>,</p>
+        
+        <div class="success-badge">PAIEMENT RÉUSSI</div>
+        
+        <p>Nous vous confirmons la bonne réception de votre paiement de <strong>{{ amount }}</strong>.</p>
+        <p>Nous vous invitons à télécharger votre facture associé à ce mail</p>
+        
+        <div class="details">
+            <div class="detail-row">
+                <span>Référence :</span>
+                <strong>{{ invoice_number }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Facture :</span>
+                <strong>{{ invoice_number }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Date :</span>
+                <strong>{{ payment_date }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Méthode :</span>
+                <strong>{{ payment_method }}</strong>
+            </div>
+        </div>
+        
+        
+        <p><em>Merci pour votre confiance !</em></p>
+    </div>
+    
+    <div class="footer">
+        <p>{{ company_name }}<br>{{ company_address }}</p>
+        <p>📞 {{ company_phone }} | 📧 {{ company_email }}</p>
+        <p>© {{ current_year }} {{ company_name }}</p>
+    </div>
+</body>
+</html>

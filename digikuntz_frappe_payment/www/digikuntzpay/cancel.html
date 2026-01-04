@@ -448,41 +448,6 @@
         </div>
     </div>
 
-    <!-- Contact Support Modal -->
-    <div id="support-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3><i class="fas fa-headset"></i> Contacter le support</h3>
-            <form id="support-form">
-                <div class="form-group">
-                    <label for="support-name">Nom complet</label>
-                    <input type="text" id="support-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="support-email">Email</label>
-                    <input type="email" id="support-email-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="support-phone">Téléphone</label>
-                    <input type="tel" id="support-phone-input">
-                </div>
-                <div class="form-group">
-                    <label for="support-message">Message</label>
-                    <textarea id="support-message" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="include-details">
-                        <input type="checkbox" id="include-details" checked>
-                        Inclure les détails de l'erreur
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-retry">
-                    <i class="fas fa-paper-plane"></i>
-                    Envoyer la demande
-                </button>
-            </form>
-        </div>
-    </div>
 
     <script src="/assets/votre_app/js/payment.js"></script>
     <script>
@@ -595,14 +560,14 @@
             startRedirectCountdown() {
                 const countdownElement = document.getElementById('countdown-number');
                 
-                this.redirectInterval = setInterval(() => {
-                    this.redirectCountdown--;
-                    countdownElement.textContent = this.redirectCountdown;
+                // this.redirectInterval = setInterval(() => {
+                //     this.redirectCountdown--;
+                //     countdownElement.textContent = this.redirectCountdown;
                     
-                    if (this.redirectCountdown <= 0) {
-                        this.redirectToPaymentPage();
-                    }
-                }, 1000);
+                //     if (this.redirectCountdown <= 0) {
+                //         this.redirectToPaymentPage();
+                //     }
+                // }, 1000);
             }
             
             async retryPayment() {

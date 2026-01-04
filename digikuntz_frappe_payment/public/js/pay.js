@@ -97,13 +97,13 @@ class PaymentGateway {
             const response = await this.sendPaymentToBackend({
                 method: 'pay',
                 amount: this.invoice.grand_total,
-                invoice: this.invoice.name,
-                return_url: window.location.origin + '/payment/success',
-                cancel_url: window.location.origin + '/payment/cancel'
+                invoice: this.invoice.name
             });
 
+
+
             // Redirect to pay
-            // window.location.href = response.approval_url;
+            window.location.href = response.message;
             
         } catch (error) {
             this.showError(error.message);
@@ -118,7 +118,6 @@ class PaymentGateway {
     }
 
     async sendPaymentToBackend(paymentData) {
-        console.log("paymentData 2", paymentData);
         const response = await fetch('/api/method/digikuntz_frappe_payment.api.generate_payment_link_to_api_gateway', {
             method: 'POST',
             headers: {
@@ -186,22 +185,6 @@ class PaymentGateway {
 
     showError(message) {
         this.showNotification(message, 'error');
-    }
-
-    showSuccess(response) {
-        // Update steps
-        const steps = document.querySelectorAll('.step');
-        steps.forEach((step, index) => {
-            step.classList.remove('active');
-            if(index === 2) {
-                step.classList.add('active');
-            }
-        });
-
-        // Show success page or redirect
-        setTimeout(() => {
-            window.location.href = `/payment/success?payment_id=${response.payment_id}`;
-        }, 2000);
     }
 }
 

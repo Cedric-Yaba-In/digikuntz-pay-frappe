@@ -6,9 +6,12 @@
  "engine": "InnoDB",
  "field_order": [
   "general",
+  "paiement_section",
   "behavior_mode",
   "column_break_biur",
   "mode_de_paiement_par_d\u00e9faut",
+  "section_break_pvpv",
+  "notification_email",
   "e_nkap_key",
   "enkap_key",
   "enkap_public_key",
@@ -122,13 +125,28 @@
    "fieldname": "cinetpay_api_key",
    "fieldtype": "Small Text",
    "label": "Clef API"
+  },
+  {
+   "fieldname": "paiement_section",
+   "fieldtype": "Section Break",
+   "label": "paiement"
+  },
+  {
+   "fieldname": "section_break_pvpv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notification_email",
+   "fieldtype": "Data",
+   "label": "Email de notification apr\u00e9s paiement",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-01-03 21:06:14.954025",
+ "modified": "2026-01-04 18:56:11.863385",
  "modified_by": "Administrator",
  "module": "Digikuntz Frappe Payment",
  "name": "DigikuntzPay Setting",

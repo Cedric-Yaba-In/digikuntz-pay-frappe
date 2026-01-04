@@ -1,19 +1,16 @@
 import frappe
 import time
-import hmac
-import hashlib
-import base64
 from urllib import parse
 import requests
 from .abstract_gatway import AbstractPaymentApiGateway
 
 class CinetPayApiGateway(AbstractPaymentApiGateway):
-    def __init__(self, ressource_to_pay,customer_data,return_url=None, notify_url=None):
+    def __init__(self, ressource_to_pay,customer_data,success_url=None, cancel_url=None):
         self.load_credential_api_gateway()
         self.api_url="https://api-checkout.cinetpay.com/v2"
         # self.api_version="3.0.0"
-        self.return_url = return_url
-        self.notify_url = notify_url
+        self.success_url = success_url
+        self.cancel_url = cancel_url
         self.debug=True
         self.ressource_to_pay = ressource_to_pay
         self.customer_data = customer_data
@@ -66,8 +63,8 @@ class CinetPayApiGateway(AbstractPaymentApiGateway):
             "transaction_id": str(self.ressource_to_pay.doctype)+"-"+str(self.ressource_to_pay.name),
             "site_id": str(self.cinetpay_site_id),
             "apikey": str(self.cinetpay_api_key),
-            "return_url": self.return_url,
-            "notify_url": self.notify_url,
+            "return_url": self.cancel_url,
+            "notify_url": self.success_url,
             "timestamp": str(timestamp),
             "description": f"Payment for {self.ressource_to_pay.doctype} {self.ressource_to_pay.name}",
             "channels": "ALL",

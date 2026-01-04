@@ -1,4 +1,5 @@
 import frappe
 
-PAYMENT_NOTIFU_URL = f"{frappe.utils.get_url()}/payment_notification"
-RETURN_URL = f"{frappe.utils.get_url()}/return_url"
+PAYMENT_NOTIF_URL = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status={{status}}"
+RETURN_SUCCESS_URL = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status=success"
+RETURN_CANCEL_URL = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status=cancel"

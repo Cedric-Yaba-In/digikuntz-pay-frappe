@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture Déjà Réglée | {{ company }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/digikuntz_frappe_payment/css/pay.css">
+    <style>
+        .already-paid-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+        }
+        
+        .already-paid-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .status-badge-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #e8f5e9;
+            color: #2E7D32;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        
+        .status-badge-large i {
+            font-size: 24px;
+        }
+        
+        .header-title {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .header-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .invoice-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .detail-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detail-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .detail-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .detail-card .value.amount {
+            color: #4CAF50;
+            font-size: 28px;
+        }
+        
+        .detail-card .label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .payment-history {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .payment-history h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .history-table thead {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .history-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.success {
+            background: #e8f5e9;
+            color: #2E7D32;
+        }
+        
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #EF6C00;
+        }
+        
+        .action-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .action-card {
+            flex: 1;
+            min-width: 250px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-5px);
+        }
+        
+        .action-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .action-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+        
+        .btn-outline:hover {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .summary-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .summary-section h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .celebration-animation {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .celebration-icon {
+            font-size: 60px;
+            color: #FFD700;
+            animation: bounce 2s infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .celebration-message {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .celebration-submessage {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-support {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .contact-support i {
+            color: #4CAF50;
+            font-size: 32px;
+        }
+        
+        .contact-support-content {
+            flex: 1;
+        }
+        
+        .contact-support h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .contact-support p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+        
+        .contact-item i {
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .already-paid-card {
+                padding: 30px 20px;
+            }
+            
+            .header-title {
+                font-size: 28px;
+            }
+            
+            .invoice-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-card {
+                min-width: 100%;
+            }
+            
+            .detail-card .value {
+                font-size: 20px;
+            }
+            
+            .contact-support {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .contact-info {
+                justify-content: center;
+            }
+        }
+        
+        .related-invoices {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .related-invoices h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .invoice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .invoice-item:hover {
+            border-color: #4CAF50;
+            transform: translateX(5px);
+        }
+        
+        .invoice-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .invoice-number {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .invoice-date {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .invoice-amount {
+            font-weight: 700;
+            color: #4CAF50;
+        }
+        
+        .invoice-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="already-paid-container">
+        <div class="already-paid-card">
+            <!-- Celebration Animation -->
+            <div class="celebration-animation">
+                <div class="celebration-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="celebration-message">
+                    {% if has_paid %}                    
+                        Facture déjà réglé !
+                    {% else %}
+                        Facture payé avec succes
+                    {% endif %}
+                </div>
+                <div class="celebration-submessage">
+                    {% if has_paid %}                    
+                        Votre facture à déjà été réglé.
+                    {% else %}
+                        Votre paiement a bien été récus
+                    {% endif %}
+                    
+                </div>
+            </div>
+            
+            <!-- Status Badge -->
+            <div class="header-section">
+                <div class="status-badge-large">
+                    <i class="fas fa-check-circle"></i>
+                     {% if has_paid %}                    
+                        Facture déjà réglé !
+                    {% else %}
+                        Facture payé avec succes
+                    {% endif %}
+                </div>
+                
+                <h1 class="header-title" id="invoice-title">
+                    <!-- Invoice title will be populated -->
+                </h1>
+                
+                <p class="header-subtitle">
+                    Cette facture a été entièrement payée. Vous trouverez ci-dessous les détails du paiement 
+                    et les documents associés.
+                </p>
+            </div>
+            
+            <!-- Invoice Details Grid -->
+            <div class="invoice-details-grid">
+                <div class="detail-card">
+                    <h3><i class="fas fa-file-invoice"></i> Facture</h3>
+                    <div class="value" id="invoice-number"> -- </div>
+                    <div class="label">Numéro de référence</div>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-calendar-check"></i> Date de paiement</h3>
+                    <div class="value" id="payment-date">  </div>
+                    <div class="label">Date de règlement complet</div>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-euro-sign"></i> Montant total</h3>
+                    <div class="value amount" id="total-amount">--</div>
+                    <div class="label">Montant réglé</div>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-user-check"></i> Client</h3>
+                    <div class="value" id="customer-name">--</div>
+                    <div class="label">Titulaire du compte</div>
+                </div>
+            </div>
+            
+                      
+            <!-- Action Section -->
+            <div class="action-section">
+                <div class="action-card">
+                    <h3><i class="fas fa-download"></i> Téléchargements</h3>
+                    <p>Téléchargez vos documents officiels : facture, reçu de paiement et attestation.</p>
+                    <button class="btn btn-primary" id="download-all">
+                        <i class="fas fa-file-archive"></i>
+                        Télécharger tous les documents
+                    </button>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" id="download-invoice">
+                            <i class="fas fa-file-invoice"></i>
+                            Facture
+                        </button>
+                        <button class="btn btn-secondary" id="download-receipt">
+                            <i class="fas fa-receipt"></i>
+                            Reçu
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Related Invoices -->
+            <div class="related-invoices" id="related-invoices-section" style="display: none;">
+                <h2><i class="fas fa-file-alt"></i> Factures associées</h2>
+                <div class="invoice-list" id="related-invoices-list">
+                    <!-- Related invoices will be populated by JS -->
+                </div>
+            </div>
+            
+            <!-- Contact Support -->
+            <div class="contact-support">
+                <i class="fas fa-question-circle"></i>
+                <div class="contact-support-content">
+                    <h4>Besoin d'aide supplémentaire ?</h4>
+                    <p>Notre équipe support est disponible pour répondre à vos questions concernant ce paiement.</p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span id="support-phone"> {{ company_phone }} </span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span id="support-email"> {{ company_email }}</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Lun-Ven: 9h-18h</span>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            
+        </div>
+
+         <!-- Notification Toast -->
+            <div id="notification-toast" class="toast">
+                <div class="toast-content">
+                    <i class="toast-icon"></i>
+                    <span class="toast-message"></span>
+                </div>
+            </div>
+    </div>
+    <script>
+        class AlreadyPaidPage {
+            constructor() {
+                this.invoiceDetails = this.getInvoiceData();
+                this.init();
+            }
+            
+            getInvoiceData() {
+                return {
+                    name: "{{ invoice.name }}",
+                    currency:"{{ currency }}",
+                    customer_name: "{{ customer_name }}",
+                    net_total: {{ invoice.net_total }},
+                    total_taxes_and_charges: {{ invoice.total_taxes_and_charges }},
+                    discount_amount: {{ invoice.discount_amount }},
+                    grand_total: {{ invoice.grand_total }},
+                    items: [
+                        {% for item in invoice.items %}
+                        {
+                            description: "{{ item.item_name }}",
+                            qty: parseInt({{ item.qty }}),
+                            rate: {{ item.rate }},
+                            amount: {{ item.amount }}
+                        }
+                        {% if not loop.last %} , {% endif %}
+                        {% endfor %}
+                    ]
+                };
+            }
+            
+            async init() {
+                this.setupEventListeners();
+                this.updateUI();
+            }
+            
+            
+            updateUI() {
+                console.log("invoiceData ",this.invoiceDetails)
+
+                // Update invoice details
+                document.getElementById('invoice-title').textContent = `Facture ${this.invoiceDetails.name}`;
+                document.getElementById('invoice-number').textContent = this.invoiceDetails.name;
+                document.getElementById('payment-date').textContent = this.formatDate(this.invoiceDetails.paid_date);
+                document.getElementById('total-amount').textContent = this.formatCurrency(this.invoiceDetails.grand_total);
+                document.getElementById('customer-name').textContent = this.invoiceDetails.customer_name;
+                
+                
+                if (this.invoiceDetails.outstanding_amount > 0) {
+                    statusElement.style.color = '#f39c12';
+                }
+            }
+            
+            async loadRelatedInvoices() {
+                try {
+                    const response = await fetch(`/api/method/votre_app.payment_api.get_related_invoices?customer=${this.invoiceDetails.customer}&exclude=${this.invoiceDetails.name}`);
+                    const data = await response.json();
+                    
+                    if (data.message && data.message.length > 0) {
+                        this.showRelatedInvoices(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error loading related invoices:', error);
+                }
+            }
+            
+            showRelatedInvoices(invoices) {
+                const section = document.getElementById('related-invoices-section');
+                const list = document.getElementById('related-invoices-list');
+                
+                if (invoices.length === 0) return;
+                
+                section.style.display = 'block';
+                list.innerHTML = '';
+                
+                invoices.forEach(invoice => {
+                    const item = document.createElement('div');
+                    item.className = 'invoice-item';
+                    
+                    // Format date
+                    const date = new Date(invoice.posting_date);
+                    const formattedDate = date.toLocaleDateString('fr-FR');
+                    
+                    // Status
+                    let status = '';
+                    let statusColor = '';
+                    
+                    if (invoice.outstanding_amount === 0) {
+                        status = 'Payée';
+                        statusColor = '#4CAF50';
+                    } else if (invoice.outstanding_amount === invoice.grand_total) {
+                        status = 'Impayée';
+                        statusColor = '#f44336';
+                    } else {
+                        status = 'Partielle';
+                        statusColor = '#ff9800';
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="invoice-info">
+                            <div class="invoice-number">${invoice.name}</div>
+                            <div class="invoice-date">${formattedDate}</div>
+                        </div>
+                        <div class="invoice-status">
+                            <div class="invoice-amount">${this.formatCurrency(invoice.grand_total)}</div>
+                            <div style="color: ${statusColor}; font-weight: 600;">${status}</div>
+                            <button class="btn-view-invoice" data-invoice="${invoice.name}" style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    list.appendChild(item);
+                });
+                
+                // Add event listeners
+                document.querySelectorAll('.btn-view-invoice').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const invoiceName = e.target.closest('button').dataset.invoice;
+                        this.viewInvoice(invoiceName);
+                    });
+                });
+            }
+            
+            setupEventListeners() {
+                // Download buttons
+                document.getElementById('download-all').addEventListener('click', () => {
+                    this.downloadAllDocuments();
+                });
+                
+                document.getElementById('download-invoice').addEventListener('click', () => {
+                    this.downloadInvoice();
+                });
+                
+                document.getElementById('download-receipt').addEventListener('click', () => {
+                    this.downloadReceipt();
+                });      
+                
+                document.querySelectorAll('.share-option').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.handleShareOption(e.target.dataset.platform);
+                    });
+                });
+            }
+            
+                     
+            async downloadAllDocuments() {
+                try {
+                    this.showLoading('Préparation des documents...');
+                    
+                    // Download invoice
+                    await this.downloadInvoice(false);
+                    
+                    // Download receipt if available
+                    if (this.invoiceDetails.name) {
+                        await this.downloadReceipt(false);
+                    }
+                    
+                    this.hideLoading();
+                    this.showNotification('Tous les documents ont été téléchargés', 'success');
+                    
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification('Erreur lors du téléchargement', 'error');
+                }
+            }
+            
+            async downloadInvoice(showNotification = true) {
+                try {
+                    const response = await fetch(`/api/method/frappe.utils.print_format.download_pdf?doctype=Sales%20Invoice&name=${this.invoiceDetails.name}&format=Standard`);
+                    const blob = await response.blob();
+                    
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `facture_${this.invoiceDetails.name}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    if (showNotification) {
+                        this.showNotification('Facture téléchargée avec succès', 'success');
+                    }
+                    
+                } catch (error) {
+                    if (showNotification) {
+                        this.showNotification('Erreur lors du téléchargement de la facture', 'error');
+                    }
+                }
+            }
+            
+            async downloadReceipt(showNotification = true) {
+                if (!this.invoiceDetails.name) {
+                    this.showNotification('Aucun reçu disponible pour cette facture', 'info');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`/api/method/frappe.utils.print_format.download_pdf?doctype=Payment%20Entry&name=${this.invoiceDetails.payment_id}&format=Payment%20Receipt`);
+                    const blob = await response.blob();
+                    
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `reçu_${this.invoiceDetails.name}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    if (showNotification) {
+                        this.showNotification('Reçu téléchargé avec succès', 'success');
+                    }
+                    
+                } catch (error) {
+                    if (showNotification) {
+                        this.showNotification('Erreur lors du téléchargement du reçu', 'error');
+                    }
+                }
+            }
+            
+            viewPaymentReceipt(paymentId) {
+                window.open(`/api/method/frappe.utils.print_format.download_pdf?doctype=Payment%20Entry&name=${paymentId}&format=Payment%20Receipt&no_letterhead=0`, '_blank');
+            }
+            
+            viewInvoice(invoiceName) {
+                window.open(`/app/sales-invoice/${invoiceName}`, '_blank');
+            }
+                
+            
+            viewAllInvoices() {
+                window.open('/app/query-report/Accounts%20Receivable', '_blank');
+            }
+            
+            makeNewPayment() {
+                window.open('/app/sales-invoice', '_blank');
+            }
+          
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: this.invoiceDetails?.currency || 'EUR'
+                }).format(amount);
+            }
+            
+            formatDate(dateString) {
+                if (!dateString) return '--';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+            
+        showNotification(message, type = 'info') {
+            const toast = document.getElementById('notification-toast');
+            const icon = toast.querySelector('.toast-icon');
+            const messageEl = toast.querySelector('.toast-message');
+
+            // Set icon based on type
+            icon.className = 'toast-icon';
+            switch (type) {
+                case 'success':
+                    icon.classList.add('fas', 'fa-check-circle');
+                    break;
+                case 'error':
+                    icon.classList.add('fas', 'fa-exclamation-circle');
+                    break;
+                case 'warning':
+                    icon.classList.add('fas', 'fa-exclamation-triangle');
+                    break;
+                default:
+                    icon.classList.add('fas', 'fa-info-circle');
+            }
+
+            // Set message
+            messageEl.textContent = message;
+
+            // Show toast
+            toast.className = `toast ${type}`;
+            toast.style.display = 'block';
+
+            // Auto hide
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 5000);
+        }
+            
+            showLoading(message) {
+                // Create loading overlay
+                const overlay = document.createElement('div');
+                overlay.id = 'loading-overlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000;
+                    color: white;
+                    font-size: 18px;
+                `;
+                
+                overlay.innerHTML = `
+                    <div style="text-align: center;">
+                        <div class="loading-spinner" style="width: 60px; height: 60px; border: 5px solid #f3f3f3; border-top: 5px solid #4CAF50; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <p>${message}</p>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                // Add animation style if not exists
+                if (!document.querySelector('#spin-animation')) {
+                    const style = document.createElement('style');
+                    style.id = 'spin-animation';
+                    style.textContent = `
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            hideLoading() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.remove();
+                }
+            }
+            
+            showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #ff6b6b;
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    z-index: 10000;
+                    max-width: 400px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                errorDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+                        <div>
+                            <strong>Erreur</strong>
+                            <p style="margin: 5px 0 0 0;">${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 300);
+                }, 5000);
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.alreadyPaidPage = new AlreadyPaidPage();
+        });
+        
+    </script>
+</body>
+</html>

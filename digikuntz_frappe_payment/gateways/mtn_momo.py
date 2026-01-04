@@ -5,14 +5,14 @@ from .abstract_gatway import AbstractPaymentApiGateway
 
 
 class MTNMoMoGateway(AbstractPaymentApiGateway):
-    def __init__(self,ressource_to_pay,customer_data,return_url=None, notify_url=None):
+    def __init__(self,ressource_to_pay,customer_data,success_url=None, cancel_url=None):
         self.load_credential_api_gateway()
         self.api_url="https://ericssonbasicapi2.azure-api.net/collection"
         self.api_version="1.0"
         self.ressource_to_pay = ressource_to_pay   
         self.customer_data = customer_data
-        self.return_url = return_url
-        self.notify_url = notify_url 
+        self.success_url = success_url
+        self.cancel_url = cancel_url
         self.debug=True
 
     def load_credential_api_gateway(self):
