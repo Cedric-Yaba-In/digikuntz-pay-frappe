@@ -36,7 +36,7 @@ has_desktop = True
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/digikuntz_frappe_payment/css/digikuntz_frappe_payment.css"
-# app_include_js = "/assets/digikuntz_frappe_payment/js/digikuntz_frappe_payment.js"
+app_include_js = "/assets/digikuntz_frappe_payment/js/digikuntz_frappe_payment.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/digikuntz_frappe_payment/css/digikuntz_frappe_payment.css"

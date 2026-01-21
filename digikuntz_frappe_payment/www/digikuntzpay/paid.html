@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facture Déjà Réglée | {{ company }}</title>
+    <title>Facture a été Réglée | {{ company }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/digikuntz_frappe_payment/css/pay.css">
@@ -475,19 +475,10 @@
                     <i class="fas fa-trophy"></i>
                 </div>
                 <div class="celebration-message">
-                    {% if has_paid %}                    
-                        Facture déjà réglé !
-                    {% else %}
                         Facture payé avec succes
-                    {% endif %}
                 </div>
                 <div class="celebration-submessage">
-                    {% if has_paid %}                    
-                        Votre facture à déjà été réglé.
-                    {% else %}
                         Votre paiement a bien été récus
-                    {% endif %}
-                    
                 </div>
             </div>
             
@@ -495,11 +486,7 @@
             <div class="header-section">
                 <div class="status-badge-large">
                     <i class="fas fa-check-circle"></i>
-                     {% if has_paid %}                    
-                        Facture déjà réglé !
-                    {% else %}
                         Facture payé avec succes
-                    {% endif %}
                 </div>
                 
                 <h1 class="header-title" id="invoice-title">
