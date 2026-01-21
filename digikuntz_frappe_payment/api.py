@@ -41,10 +41,10 @@ def generate_payment_link(ressource_data_name,ressource_type):
 @frappe.whitelist(allow_guest=True)
 def generate_payment_link_to_api_gateway():
     data = json.loads(frappe.request.data)
-    if not frappe.db.exists("DigikuntzPay Link", {"id_ressource": data.get("invoice")}):
+    if not frappe.db.exists("DigikuntzPay Link", {"name": data.get("ref")}):
         throw = frappe.throw("Payment link not found")
 
-    payment_link_doc = frappe.get_doc("DigikuntzPay Link", {"id_ressource": data.get("invoice")})
+    payment_link_doc = frappe.get_doc("DigikuntzPay Link", {"name": data.get("ref")})
 
     ressource_to_pay = frappe.get_doc(payment_link_doc.type_ressource, payment_link_doc.id_ressource)
 
@@ -56,7 +56,7 @@ def generate_payment_link_to_api_gateway():
 
     customer_data =frappe.get_doc("Customer", ressource_to_pay.customer)
 
-    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data)
+    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data, data.get("ref"))
 
     behavior_for_payment = frappe.db.get_single_value('DigikuntzPay Setting', 'behavior_mode')
 
@@ -79,33 +79,31 @@ def payment_callback():
         frappe.throw("Payment ref not provided in the callback.")
 
     #Get the payment link and resource to pay
-    payment_link = frappe.get_doc("DigikuntzPay Link", {"id_ressource": request_data.get("ref")})
+    payment_link = frappe.get_doc("DigikuntzPay Link", {"name": request_data.get("ref")})
     ressource_to_pay = frappe.get_doc(payment_link.type_ressource, payment_link.id_ressource)
 
     #if the resource is already paid, no need to process further
     if ressource_to_pay.outstanding_amount <= 0:
         frappe.local.response["type"] = "redirect"
-        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status=success&ref={request_data.get('ref')}"
+        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify_pay?pay_req_status=success&ref={request_data.get('ref')}"
         return
     
     #get customer data and load gateway
     customer_data = frappe.get_doc("Customer", ressource_to_pay.customer)
-    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data)
+    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data,request_data.get("ref"))
 
     #call the callback method of the gateway
     is_paid = gateway_payment.call_back(request_data)
 
     if is_paid == enum_utils.PaymentRequestStatus.REFUSED.value:
-        payment_status = "cancel"
         frappe.local.response["type"] = "redirect"
-        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status={payment_status}&ref={request_data.get('ref')}"
+        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify_pay?pay_req_status=cancel&ref={request_data.get('ref')}"
         return
     
     #switch as administrator
     original_user = frappe.session.user
     frappe.set_user("Administrator")
 
-    payment_status = "success"
 
     #mark payment as successful
     payment_entry = mark_payment_as_paid(request_data.get('ref'))
@@ -120,14 +118,13 @@ def payment_callback():
     
     frappe.set_user(original_user)
 
-    
     frappe.local.response["type"] = "redirect"
-    frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status={payment_status}&ref={request_data.get('ref')}"
+    frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify_pay?pay_req_status=success&ref={request_data.get('ref')}"
 
 #Methode pour marquer une ressource comme payée
 @frappe.whitelist(allow_guest=True)
 def mark_payment_as_paid(ref): 
-    payment_link = frappe.get_doc("DigikuntzPay Link", {"id_ressource": ref})
+    payment_link = frappe.get_doc("DigikuntzPay Link", {"name": ref})
     ressource_to_pay = frappe.get_doc(payment_link.type_ressource, payment_link.id_ressource)
     company = frappe.get_doc("Company", ressource_to_pay.company)
     payment_entry = frappe.get_doc({

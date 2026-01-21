@@ -352,20 +352,6 @@
                 </p>
             </div>
             
-            <!-- Auto Retry Option -->
-            <div class="auto-retry">
-                <div>
-                    <i class="fas fa-redo-alt"></i>
-                    <strong>Réessayer automatiquement</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
-                        Nous réessaierons le paiement dans <span id="retry-countdown">60</span> secondes
-                    </p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="auto-retry-toggle" checked>
-                    <span class="slider round"></span>
-                </label>
-            </div>
             
             <!-- Suggestions -->
             <div class="suggestions">
@@ -390,66 +376,20 @@
                 </ul>
             </div>
             
-            <!-- Alternative Payment Methods -->
-            <div class="suggestions">
-                <h4><i class="fas fa-exchange-alt"></i> Méthodes de paiement alternatives</h4>
-                <div class="payment-methods-alternative">
-                    <div class="method-alt" data-method="paypal">
-                        <i class="fab fa-paypal" style="color: #003087;"></i>
-                        <span>PayPal</span>
-                    </div>
-                    <div class="method-alt" data-method="mobile">
-                        <i class="fas fa-mobile-alt" style="color: #27ae60;"></i>
-                        <span>Mobile Money</span>
-                    </div>
-                    <div class="method-alt" data-method="transfer">
-                        <i class="fas fa-university" style="color: #9b59b6;"></i>
-                        <span>Virement bancaire</span>
-                    </div>
-                    <div class="method-alt" data-method="other-card">
-                        <i class="fas fa-credit-card" style="color: #1a1f71;"></i>
-                        <span>Autre carte</span>
-                    </div>
-                </div>
-            </div>
             
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button id="retry-payment" class="btn btn-retry">
-                    <i class="fas fa-redo"></i>
-                    Réessayer le paiement
-                </button>
-                <button id="try-different-method" class="btn btn-alternative">
-                    <i class="fas fa-exchange-alt"></i>
-                    Changer de méthode
-                </button>
-                <button id="contact-support" class="btn btn-support">
-                    <i class="fas fa-headset"></i>
-                    Contacter le support
-                </button>
-            </div>
-            
-            <!-- Countdown Timer -->
-            <div class="countdown" id="redirect-countdown">
-                Redirection vers la page de paiement dans 
-                <span class="countdown-number" id="countdown-number">10</span>
-                secondes...
-            </div>
             
             <!-- Support Info -->
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e9ecef;">
                 <p style="color: #666; font-size: 14px;">
                     <i class="fas fa-life-ring"></i>
                     Besoin d'aide urgente ? Contactez-nous immédiatement :<br>
-                    <strong id="support-phone">+33 1 23 45 67 89</strong> | 
-                    <strong id="support-email">urgence@entreprise.com</strong>
+                    <strong id="support-phone">{{ company_phone }}</strong> | 
+                    <strong id="support-email">{{ company_email }}</strong>
                 </p>
             </div>
         </div>
     </div>
 
-
-    <script src="/assets/votre_app/js/payment.js"></script>
     <script>
         class ErrorPage {
             constructor() {
@@ -466,7 +406,7 @@
                 
                 return {
                     code: urlParams.get('code') || 'PAYMENT_FAILED',
-                    message: urlParams.get('message') || 'Transaction refusée par la banque',
+                    message: urlParams.get('message') || 'Transaction annulée',
                     payment_id: urlParams.get('payment_id'),
                     invoice: urlParams.get('invoice')
                 };
@@ -559,15 +499,6 @@
             
             startRedirectCountdown() {
                 const countdownElement = document.getElementById('countdown-number');
-                
-                // this.redirectInterval = setInterval(() => {
-                //     this.redirectCountdown--;
-                //     countdownElement.textContent = this.redirectCountdown;
-                    
-                //     if (this.redirectCountdown <= 0) {
-                //         this.redirectToPaymentPage();
-                //     }
-                // }, 1000);
             }
             
             async retryPayment() {

@@ -14,7 +14,6 @@ class PaymentGateway {
     }
 
     setupEventListeners() {
-        console.log("PAy button ",document.getElementById('pay-button'))
         document.getElementById('pay-button').addEventListener('click', (e) => {
             e.preventDefault();
             this.processRedirectUrlPayment();
@@ -97,7 +96,8 @@ class PaymentGateway {
             const response = await this.sendPaymentToBackend({
                 method: 'pay',
                 amount: this.invoice.grand_total,
-                invoice: this.invoice.name
+                invoice: this.invoice.name,
+                ref:ref
             });
 
 

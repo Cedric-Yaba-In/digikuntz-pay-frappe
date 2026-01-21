@@ -10,9 +10,12 @@ def get_context(context):
         return context
     
     context.has_ref = True
+    context.ref=ref
 
     payment_link = frappe.get_doc("DigikuntzPay Link", {"name": ref})
     
+    print("Payment Link Doc ",payment_link)
+
     doc = frappe.get_doc(payment_link.type_ressource, payment_link.id_ressource)
 
     if doc.outstanding_amount <= 0:
