@@ -57,7 +57,7 @@ class EnkapApiGateway(AbstractPaymentApiGateway):
     def make_payment_by_qrcode(self):
         pass
 
-    def call_back(self):
+    def call_back(self,data):
         pass
 
     def create_authorization_header(self, method, additional_params=None):
@@ -81,6 +81,7 @@ class EnkapApiGateway(AbstractPaymentApiGateway):
             print(f"Authorization Header: {auth_header}")
         return auth_header
     
+    
     #for testing
     def ping(self):
         headers = {
@@ -100,3 +101,6 @@ class EnkapApiGateway(AbstractPaymentApiGateway):
         except requests.RequestException as e:
             frappe.throw(f"Network error occurred: {str(e)}")
             return (f"Network error occurred: {str(e)}")
+        
+    def check_payment_status(self,data):
+        pass

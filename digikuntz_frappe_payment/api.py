@@ -4,12 +4,16 @@
 import frappe
 import json
 import digikuntz_frappe_payment.utils.gateway_factory as gateway_factory
-import digikuntz_frappe_payment.utils.payment_handler as payment_handler
 import digikuntz_frappe_payment.utils.enum as enum_utils
+import digikuntz_frappe_payment.utils.utils_func as utils_func
 
 
-def get_payment_link(doc):
-    
+@frappe.whitelist(allow_guest=True)
+def get_doc_of(doctype, data):
+    """Fetch a document from the database."""
+    return frappe.get_doc(doctype, data)
+
+def get_payment_link(doc):    
     return f"{frappe.utils.get_url()}/digikuntzpay/pay?ref={doc.name}"
 
 
@@ -66,17 +70,64 @@ def generate_payment_link_to_api_gateway():
     
    
 #Webhook pour le callback de paiement; utiliser pour le payement direct et QR Code
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True,  methods=['GET','POST'])
 def payment_callback():
-    payment_status = None
+    # /api/method/digikuntz_frappe_payment.api.payment_callback
+    request_data = utils_func.get_request_data()
 
-    if payment_status:
-        payment_handler.on_success_payment(None,None)
-    return None
+    if not request_data.get("ref"):
+        frappe.throw("Payment ref not provided in the callback.")
+
+    #Get the payment link and resource to pay
+    payment_link = frappe.get_doc("DigikuntzPay Link", {"id_ressource": request_data.get("ref")})
+    ressource_to_pay = frappe.get_doc(payment_link.type_ressource, payment_link.id_ressource)
+
+    #if the resource is already paid, no need to process further
+    if ressource_to_pay.outstanding_amount <= 0:
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status=success&ref={request_data.get('ref')}"
+        return
+    
+    #get customer data and load gateway
+    customer_data = frappe.get_doc("Customer", ressource_to_pay.customer)
+    gateway_payment = gateway_factory.load_default_gateway(ressource_to_pay, customer_data)
+
+    #call the callback method of the gateway
+    is_paid = gateway_payment.call_back(request_data)
+
+    if is_paid == enum_utils.PaymentRequestStatus.REFUSED.value:
+        payment_status = "cancel"
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status={payment_status}&ref={request_data.get('ref')}"
+        return
+    
+    #switch as administrator
+    original_user = frappe.session.user
+    frappe.set_user("Administrator")
+
+    payment_status = "success"
+
+    #mark payment as successful
+    payment_entry = mark_payment_as_paid(request_data.get('ref'))
+
+    #send receipts to team and customer
+    customer_email = ressource_to_pay.contact_email or frappe.db.get_value("Customer", ressource_to_pay.customer, "email_id")
+    send_customer_payment_receipt(payment_entry.name, customer_email)
+
+
+
+    send_team_payment_receipt(payment_entry.name)
+    
+    frappe.set_user(original_user)
+
+    
+    frappe.local.response["type"] = "redirect"
+    frappe.local.response["location"] = f"{frappe.utils.get_url()}/digikuntzpay/notify-pay?pay_req_status={payment_status}&ref={request_data.get('ref')}"
 
 #Methode pour marquer une ressource comme payée
-def mark_payment_as_paid(ref):
-    payment_link = frappe.get_doc("DigikuntzPay Link", {"name": ref})
+@frappe.whitelist(allow_guest=True)
+def mark_payment_as_paid(ref): 
+    payment_link = frappe.get_doc("DigikuntzPay Link", {"id_ressource": ref})
     ressource_to_pay = frappe.get_doc(payment_link.type_ressource, payment_link.id_ressource)
     company = frappe.get_doc("Company", ressource_to_pay.company)
     payment_entry = frappe.get_doc({
@@ -102,13 +153,13 @@ def mark_payment_as_paid(ref):
         }]
     })
 
-    payment_entry.insert()
+    payment_entry.insert(ignore_permissions=True)
     payment_entry.submit()
     return payment_entry
 
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def send_customer_payment_receipt(payment_id, email):
     """Send payment receipt email"""
     payment = frappe.get_doc("Payment Entry", payment_id)
@@ -143,7 +194,7 @@ def send_customer_payment_receipt(payment_id, email):
     return {"status": "sent"}
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def send_team_payment_receipt(payment_id):
     """Send payment receipt email"""
     payment = frappe.get_doc("Payment Entry", payment_id)

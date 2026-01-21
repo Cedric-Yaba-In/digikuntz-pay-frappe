@@ -34,7 +34,10 @@ class MTNMoMoGateway(AbstractPaymentApiGateway):
     def make_payment_by_qrcode(self):
         pass
 
-    def call_back(self):
+    def call_back(self,data):
+        pass
+
+    def check_payment_status(self,data):
         pass
 
     def get_api_key(self):

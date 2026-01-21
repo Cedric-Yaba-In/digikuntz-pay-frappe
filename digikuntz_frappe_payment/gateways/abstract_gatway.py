@@ -14,9 +14,13 @@ class AbstractPaymentApiGateway(ABC):
         pass
 
     @abstractmethod
-    def call_back(self):
+    def call_back(self,data):
         pass
     
     @abstractmethod
     def load_credential_api_gateway(self):
+        pass
+
+    @abstractmethod
+    def check_payment_status(self,data):
         pass

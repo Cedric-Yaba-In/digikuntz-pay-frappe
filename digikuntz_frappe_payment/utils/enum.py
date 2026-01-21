@@ -13,3 +13,9 @@ class GatyewayPaymentType(Enum):
     FLUTTERWAVE = "Flutterwave"
     CINET_PAY = "Cinet Pay"
     MTN_MOMO = "MTN MoMo"
+
+class PaymentRequestStatus(Enum):
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+    REFUSED = "CANCELLED"
